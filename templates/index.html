@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        label, select, input, button, textarea {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        select, input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        textarea {
+            width: calc(100% - 20px);
+            height: 150px;
+            resize: none;
+            margin-top: 20px;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <label for="url">Enter URL:</label>
+        <input type="text" id="url" />
+
+        <label for="scrapingOption">Select Scraping Option:</label>
+        <select id="scrapingOption">
+            <option value="fullHtml">Full HTML Parse</option>
+            <option value="divTags">Div Tags</option>
+            <option value="allLinks">All Links</option>
+            <option value="tableHeads">Table Heads</option>
+            <option value="tableBody">Table Body</option>
+            <option value="allTables">All Tables (Head and Body)</option>
+            <option value="extractInfo">Extract Emails, Phone Numbers, and Addresses</option>
+        </select>
+
+        <button>Scrape</button>
+
+        <textarea id="result" readonly></textarea>
+    </div>
+</body>
+</html>
