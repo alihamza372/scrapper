@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -15,19 +15,14 @@ def scrape():
     scraping_option = request.args.get('option')
     html = get_html(url)
 
-    if scraping_option == 'fullHtml':
-        result = html
-    elif scraping_option == 'divTags':
-        result = extract_div_tags(html)
-    elif scraping_option == 'allLinks':
-        result = extract_links(html)
-    elif scraping_option == 'tableHeads':
-        result = extract_table_heads(html)
-    elif scraping_option == 'tableBody':
-        result = extract_table_body(html)
-    elif scraping_option == 'allTables':
-        result = extract_all_tables(html)
-
+    if scraping_option == 'allLinks':
+        result = extract_all_links(html)
+    elif scraping_option == 'phoneNumbers':
+        result = extract_phone_numbers(html)
+    elif scraping_option == 'emailAddresses':
+        result = extract_email_addresses(html)
+    elif scraping_option == 'socialMediaLinks':
+        result = extract_social_media_links(html)
     else:
         result = "Invalid scraping option."
 
@@ -37,31 +32,40 @@ def get_html(url):
     response = requests.get(url)
     return response.text
 
-def extract_div_tags(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    div_tags = soup.find_all('div')
-    return "\n".join(str(tag) for tag in div_tags)
-
-def extract_links(html):
+def extract_all_links(html):
     soup = BeautifulSoup(html, 'html.parser')
     links = [{'url': a['href'], 'text': a.text.strip()} for a in soup.find_all('a', href=True)]
     return "\n".join(f"<a href='{link['url']}' target='_blank'>{link['text']}</a>" for link in links)
 
-def extract_table_heads(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    table_heads = soup.find_all('th')
-    return [th.text.strip() for th in table_heads]
+def extract_phone_numbers(html):
+    phone_numbers = re.findall(r'\b\d{10}\b', html)
+    return "\n".join(phone_numbers)
 
-def extract_table_body(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    table_body = soup.find_all('td')
-    return [td.text.strip() for td in table_body]
+def extract_email_addresses(html):
+    email_addresses = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', html)
+    return "\n".join(email_addresses)
 
-def extract_all_tables(html):
+def extract_social_media_links(html):
     soup = BeautifulSoup(html, 'html.parser')
-    all_tables = soup.find_all('table')
-    return "\n".join(str(table) for table in all_tables)
+    social_media_links = []
 
+    # Add more social media patterns as needed
+    social_media_patterns = [
+        re.compile(r'https://www\.facebook\.com/'),
+        re.compile(r'https://www\.twitter\.com/'),
+        re.compile(r'https://www\.linkedin\.com/'),
+        re.compile(r'https://www\.youtube\.com/'),
+        re.compile(r'https://www\.instagram\.com/'),
+        # Add more patterns for other social media platforms
+    ]
+
+    for a in soup.find_all('a', href=True):
+        for pattern in social_media_patterns:
+            if pattern.match(a['href']):
+                social_media_links.append({'url': a['href'], 'text': a.text.strip()})
+                break
+
+    return "\n".join(f"<a href='{link['url']}' target='_blank'>{link['text']}</a>" for link in social_media_links)
 
 if __name__ == "__main__":
     app.run(debug=True)
