@@ -25,11 +25,10 @@
 
         label, select, input, button, textarea {
             margin-bottom: 10px;
-            display: block;
         }
 
         select, input {
-            width: calc(100% - 20px);
+            width: 100%;
             padding: 10px;
             box-sizing: border-box;
         }
@@ -48,12 +47,10 @@
         }
 
         textarea {
-            width: calc(100% - 20px);
+            width: 100%;
             height: 150px;
             resize: none;
             margin-top: 20px;
-            box-sizing: border-box;
-            padding: 10px;
         }
     </style>
 </head>
@@ -70,12 +67,29 @@
             <option value="tableHeads">Table Heads</option>
             <option value="tableBody">Table Body</option>
             <option value="allTables">All Tables (Head and Body)</option>
-            <option value="extractInfo">Extract Emails, Phone Numbers, and Addresses</option>
         </select>
 
-        <button>Scrape</button>
+        <button onclick="scrape()">Scrape</button>
 
         <textarea id="result" readonly></textarea>
     </div>
+
+    <script>
+        function scrape() {
+            var url = document.getElementById("url").value;
+            var scrapingOption = document.getElementById("scrapingOption").value;
+            var resultTextArea = document.getElementById("result");
+
+            fetch(`/scrape?url=${url}&option=${scrapingOption}`)
+                .then(response => response.text())
+                .then(data => {
+                    resultTextArea.value = data;
+                })
+                .catch(error => {
+                    resultTextArea.value = `Error: ${error.message}`;
+                });
+        }
+    </script>
 </body>
 </html>
+

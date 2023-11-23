@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import requests
 from bs4 import BeautifulSoup
+import re
 
 app = Flask(__name__)
 
@@ -15,19 +16,18 @@ def scrape():
     html = get_html(url)
 
     if scraping_option == 'fullHtml':
-        result = prettify_html(html)
+        result = html
     elif scraping_option == 'divTags':
-        result = prettify_html(extract_div_tags(html))
+        result = extract_div_tags(html)
     elif scraping_option == 'allLinks':
-        result = prettify_html(extract_links(html))
+        result = extract_links(html)
     elif scraping_option == 'tableHeads':
-        result = prettify_html(extract_table_heads(html))
+        result = extract_table_heads(html)
     elif scraping_option == 'tableBody':
-        result = prettify_html(extract_table_body(html))
+        result = extract_table_body(html)
     elif scraping_option == 'allTables':
-        result = prettify_html(extract_all_tables(html))
-    elif scraping_option == 'extractInfo':
-        result = "Info extraction not implemented yet."
+        result = extract_all_tables(html)
+
     else:
         result = "Invalid scraping option."
 
@@ -62,9 +62,6 @@ def extract_all_tables(html):
     all_tables = soup.find_all('table')
     return "\n".join(str(table) for table in all_tables)
 
-def prettify_html(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    return soup.prettify()
 
 if __name__ == "__main__":
     app.run(debug=True)
